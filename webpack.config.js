@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
   entry: "./src/index.ts",
@@ -22,5 +23,11 @@ module.exports = {
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist")
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      TODOAPP_ENDPOINT: `"${process.env.TODOAPP_ENDPOINT}"`,
+      TODOAPP_KEY: `"${process.env.TODOAPP_KEY}"`
+    })
+  ]
 };

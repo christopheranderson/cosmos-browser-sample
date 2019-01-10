@@ -3,16 +3,98 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Page Title</title>
+    <title>Another Todo App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      /*
+      Color palette
+      #62bdff
+      #6296ff
+      #626eff
+      #7d62ff
+      #a462ff
+      #cb62ff
+      */
+      body {
+        background-color: #62bdff;
+      }
+
+      #todo-container {
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #dcdedd;
+        -webkit-box-shadow: 0px 0px 37px -1px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 0px 0px 37px -1px rgba(0, 0, 0, 0.75);
+        box-shadow: 0px 0px 37px -1px rgba(0, 0, 0, 0.75);
+      }
+
+      #todo-input-container {
+        padding: 5px;
+        margin-bottom: 5px;
+      }
+
+      /* Neat trick from Rik Schennink - https://codepen.io/rikschennink/pen/rpNGyy?editors=1100 */
+      .todo-input {
+        position: relative;
+        background: linear-gradient(21deg, #6296ff, #cb62ff);
+        padding: 3px;
+        display: inline-block;
+        border-radius: 9999em;
+      }
+
+      .todo-input > input {
+        font-size: 1.5em;
+        position: relative;
+        display: inherit;
+        border-radius: inherit;
+        margin: 0;
+        border: none;
+        outline: none;
+        padding: 0 0.325em;
+        z-index: 1;
+      }
+
+      .todo-button {
+        font-family: "Inconsolata", monospace;
+        color: white;
+        border-radius: 9999em;
+        outline: none;
+        border: none;
+        background: #cb62ff;
+        height: 1.5em;
+        font-size: 1.5em;
+        padding: 0 0.5em;
+      }
+
+      .todo-item {
+        margin-bottom: 5px;
+        background-color: white;
+        padding: 5px;
+        min-height: 30px;
+        border-radius: 5px;
+        border: 1px;
+        -webkit-box-shadow: 0px 0px 37px -12px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 0px 0px 37px -12px rgba(0, 0, 0, 0.75);
+        box-shadow: 0px 0px 37px -12px rgba(0, 0, 0, 0.75);
+      }
+
+      html {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol";
+        line-height: 1.5;
+        font-size: 1em;
+      }
+    </style>
   </head>
   <body>
-    <h1>Todos</h1>
-    <div>
-      <input id="todoText" type="text" />
-      <input type="button" value="submit" onclick="addTodo()" />
+    <div id="todo-container">
+      <form id="todo-input-container" onsubmit="addTodo(); return false;">
+        <span class="todo-input"> <input id="todoText" type="text" /> </span>
+        <button type="submit" class="todo-button">+</button>
+      </form>
+      <div id="todos"></div>
     </div>
-    <div id="todos"></div>
     <script src="./dist/bundle.js"></script>
   </body>
 </html>

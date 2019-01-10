@@ -3,19 +3,18 @@ import {
   Items,
   FeedOptions,
   QueryIterator,
-  IHeaders
+  IHeaders,
+  Resource
 } from "@azure/cosmos";
 import { ITodo } from "./ITodo";
+import { config } from "./config";
 
 export class TodoService {
   private todos: Items;
   constructor() {
     const client: CosmosClient = new CosmosClient({
-      endpoint: "https://localhost:8081",
-      auth: {
-        masterKey:
-          "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
-      }
+      endpoint: config.endpoint,
+      key: config.key
     });
 
     this.todos = client.database("TodoApp").container("Todo").items;
@@ -25,16 +24,52 @@ export class TodoService {
     await this.todos.create<ITodo>(item);
   }
 
+  public async completeItem(itemId: string, userId: string) {
+    const { body: item } = await this.todos.container
+      .item(itemId, userId)
+      .read<ITodo>();
+    if (!item) return;
+    item.completed = true;
+    await this.todos.container.item(itemId, userId).replace(item);
+  }
+
   public async onUpdates(
     userId: string,
-    fn: (item?: ITodo) => void,
+    fn: (item?: ITodo & Resource) => void,
+    shouldCancel: { cancel: boolean } = { cancel: false }
+  ): Promise<void> {
+    const iterator = this.todos.readChangeFeed<ITodo>(userId, {
+      startFromBeginning: true
+    });
+    while (!shouldCancel.cancel) {
+      try {
+        const { result: items, headers } = await iterator.executeNext();
+        for (const item of items) {
+          fn(item);
+        }
+        if (items.length === 0) {
+          await this.sleep(1000);
+        }
+      } catch (err) {
+        console.error(err);
+        console.error("onUpdates is aborting");
+        return;
+      }
+    }
+  }
+
+  /* public async onUpdates2(
+    userId: string,
+    fn: (item?: ITodo & Resource) => void,
     shouldCancel: { cancel: boolean } = { cancel: false }
   ): Promise<void> {
     const feedOptions: FeedOptions = {
       a_im: "Incremental feed",
       partitionKey: userId
     };
-    let iterator: QueryIterator<ITodo> = this.todos.readAll<ITodo>(feedOptions);
+    let iterator: QueryIterator<ITodo & Resource> = this.todos.readAll<
+      ITodo & Resource
+    >(feedOptions);
     let lastEtag: string = "*";
     while (!shouldCancel.cancel) {
       try {
@@ -59,10 +94,10 @@ export class TodoService {
         type: "IfNoneMatch",
         condition: lastEtag
       };
-      iterator = this.todos.readAll<ITodo>(feedOptions);
+      iterator = this.todos.readAll<ITodo & Resource>(feedOptions);
       await this.sleep(1000);
     }
-  }
+  } */
 
   private async sleep(durationInMilliseconds: number) {
     return new Promise((resolve, reject) => {

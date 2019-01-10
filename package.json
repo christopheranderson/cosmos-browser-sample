@@ -18,6 +18,7 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "@azure/cosmos": "^2.0.5"
+    "@azure/cosmos": "^2.1.1",
+    "@types/node": "^10.12.18"
   }
 }
