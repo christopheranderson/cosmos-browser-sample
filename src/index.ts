@@ -1,5 +1,5 @@
 import { TodoService } from "./TodoService";
-import { ITodo } from "./ITodo";
+import { Todo } from "./Todo";
 import { Resource } from "@azure/cosmos";
 
 const todoService: TodoService = new TodoService();
@@ -53,7 +53,7 @@ function markCompleted(itemId: string) {
 }
 
 async function start() {
-  await todoService.onUpdates(userId, (item?: ITodo & Resource) => {
+  await todoService.onUpdates(userId, (item?: Todo & Resource) => {
     if (item) {
       if (item.completed) {
         markCompleted(item.id);

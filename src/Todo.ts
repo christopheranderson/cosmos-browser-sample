@@ -1,4 +1,4 @@
-export interface ITodo {
+export interface Todo {
   id: string;
   description: string;
   userId: string;

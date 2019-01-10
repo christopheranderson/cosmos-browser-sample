@@ -6,7 +6,7 @@ import {
   IHeaders,
   Resource
 } from "@azure/cosmos";
-import { ITodo } from "./ITodo";
+import { Todo } from "./Todo";
 import { config } from "./config";
 
 export class TodoService {
@@ -20,14 +20,14 @@ export class TodoService {
     this.todos = client.database("TodoApp").container("Todo").items;
   }
 
-  public async addItem(item: ITodo): Promise<void> {
-    await this.todos.create<ITodo>(item);
+  public async addItem(item: Todo): Promise<void> {
+    await this.todos.create<Todo>(item);
   }
 
   public async completeItem(itemId: string, userId: string) {
     const { body: item } = await this.todos.container
       .item(itemId, userId)
-      .read<ITodo>();
+      .read<Todo>();
     if (!item) return;
     item.completed = true;
     await this.todos.container.item(itemId, userId).replace(item);
@@ -35,10 +35,10 @@ export class TodoService {
 
   public async onUpdates(
     userId: string,
-    fn: (item?: ITodo & Resource) => void,
+    fn: (item?: Todo & Resource) => void,
     shouldCancel: { cancel: boolean } = { cancel: false }
   ): Promise<void> {
-    const iterator = this.todos.readChangeFeed<ITodo>(userId, {
+    const iterator = this.todos.readChangeFeed<Todo>(userId, {
       startFromBeginning: true
     });
     while (!shouldCancel.cancel) {
